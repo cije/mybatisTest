@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- mybatis主配置文件 -->
+<configuration>
+
+    <!--
+        配置properties
+            可以在标签内部配置连接数据库的信息，也可通过属性引入外部文件信息
+        resource属性：
+            用于指定配置文件的位置，按照类路径的写法，而且必须存放在类路径下。
+     -->
+    <properties resource="jdbcConfig.properties">
+        <!--<property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url"
+                  value="jdbc:mysql://localhost:3306/mybatis_test?characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>
+        <property name="username" value="root"/>
+        <property name="password" value="123456"/>-->
+    </properties>
+
+    <!-- 配置参数 -->
+    <settings>
+        <!-- 开启Mybatis知识延迟加载 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
+    <!-- 使用typeAliases配置别名，只能配置domain中类的别名-->
+    <typeAliases>
+        <!-- typeAlias用于配置别名。type属性指定的是实体类全限定类名。alias属性指定别名，当指定了别名就不再区分大小写 -->
+        <!--
+        <typeAlias type="com.com.ce.domain.User" alias="user"/>
+        -->
+        <typeAlias type="com.ce.util.MyDruidDataSourceFactory" alias="druid"/>
+
+        <!-- 用于指定要配置别名的包，当指定之后，该包下的类都会注册别名，类名就是别名，不区分大小写-->
+        <package name="com.ce.domain"/>
+    </typeAliases>
+
+    <!-- 配置环境-->
+    <environments default="mysql">
+        <!--配置mysql的环境 -->
+        <environment id="mysql">
+            <!--配置事务的类型-->
+            <transactionManager type="JDBC"/>
+
+            <!-- 配置数据源（连接池）-->
+            <dataSource type="druid">
+                <!--配置连接数据库的基本信息 -->
+                <!--
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url"
+                          value="jdbc:mysql://localhost:3306/mybatis_test?characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+                -->
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!-- 指定映射配置文件的位置，映射配置文件指的是每个dao独立的配置文件
+        如果用注解配置的话，此处应该使用class属性指定被注解的全限定类名
+    -->
+    <mappers>
+        <!-- 非注解方式 -->
+        <!-- <mapper resource="com/ce/dao/IUserDao.xml"/> -->
+        <!-- 注解方式 -->
+        <!--        <mapper class="com.ce.dao.IUserDao"/>-->
+        <!-- 用于指定dao接口所在的包，当指定之后，就不需要再写mapper、resource或class -->
+        <package name="com.ce.dao"/>
+    </mappers>
+</configuration>

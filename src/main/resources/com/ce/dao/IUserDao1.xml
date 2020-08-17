@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ce.dao.IUserDao1">
+    <!-- 配置 查询结果的列名和实体类的属性名的对应关系 -->
+    <!--
+    <resultMap id="userMap" type="uSeR">
+        &lt;!&ndash; 主键字段的对应 &ndash;&gt;
+        <id property="userId" column="id"></id>
+        &lt;!&ndash;非主键字段的对应&ndash;&gt;
+        <result property="userName" column="username"></result>
+        <result property="userAddress" column="address"></result>
+        <result property="userSex" column="sex"></result>
+        <result property="userBirthday" column="birthday"></result>
+    </resultMap>
+    -->
+
+    <!-- 抽取重复的sql语句（了解）-->
+    <sql id="defaultUser">
+        select *from user
+    </sql>
+
+    <!--配置查询所有-->
+    <!--id为方法名称-->
+    <select id="findAll" resultType="User">
+        <include refid="defaultUser" />
+    </select>
+
+    <!-- 通过id查询user -->
+    <select id="findById" resultType="com.ce.domain.User" parameterType="integer">
+        select *
+        from user
+        where id = #{id};
+    </select>
+
+    <!-- 通过name模糊查询user -->
+    <select id="findByName" resultType="User" parameterType="string">
+        select *from user where username like #{username};
+        <!-- select *from user where username like '%${value}%';-->
+    </select>
+
+    <!-- 根据QueryVo的条件查询用户 -->
+    <select id="findUserByVo" parameterType="com.ce.domain.QueryVo" resultType="User">
+        select *
+        from user
+        where username like #{user.username};
+    </select>
+
+    <!-- 根据条件查询 -->
+    <select id="findUserByCondition" resultType="User">
+        select *from user
+        <where>
+            <if test="username!=null">
+                and username = #{username}
+            </if>
+            <if test="sex!=null">
+                and sex = #{sex}
+            </if>
+            <if test="birthday!=null">
+                and birthday = #{birthday}
+            </if>
+            <if test="address!=null">
+                and address = #{address}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据queryvo中的id集合查询 -->
+    <select id="findUserInIds" resultType="User" parameterType="QueryVo">
+        <include refid="defaultUser" />
+        <where>
+            <if test="ids !=null and ids.size()>0">
+                <foreach collection="ids" open="id in (" close=")" item="id" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>
